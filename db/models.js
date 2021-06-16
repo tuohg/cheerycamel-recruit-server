@@ -2,7 +2,7 @@ const md5 = require('blueimp-md5')
 
 const mongoose = require('mongoose')
 
-mongoose.connect('mongodb://localhost:27017/employer_side')
+mongoose.connect('mongodb://localhost:27017/recruit_users')
 
 const conn = mongoose.connection
 
@@ -20,3 +20,7 @@ const userSchema = mongoose.Schema({
     company: { type: String },
     salary: { type: String }
 })
+
+const UserModel = mongoose.model('user', userSchema)
+
+exports.UserModel = UserModel
