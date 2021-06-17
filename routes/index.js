@@ -55,7 +55,7 @@ router.post('/login', function (req, res) {
 })
 
 router.post('/update', function (req, res) {
-  const userid = req.cookie.userid
+  const userid = req.cookies.userid
   if (!userid) {
     return res.send({ code: 1, msg: 'Please sign in first!' })
   }
@@ -66,6 +66,24 @@ router.post('/update', function (req, res) {
     const data = Object.assign(req.body, { _id, username, type })
 
     res.send({ code: 0, data })
+  })
+})
+
+router.get('/user', function (req, res) {
+  const userid = req.cookies.userid
+  if (!userid) {
+    return res.send({ code: 1, msg: 'Please sign in first!' })
+  }
+
+  UserModel.findOne({ _id: userid }, fileter, function (err, user) {
+    return res.send({ code: 0, data: user })
+  })
+})
+
+router.get('/list', function (req, res) {
+  const { type } = req.query
+  UserModel.find({ type }, function (err, users) {
+    return res.json({ code: 0, data: users })
   })
 })
 
