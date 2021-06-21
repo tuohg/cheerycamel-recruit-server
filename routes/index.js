@@ -3,7 +3,10 @@ var router = express.Router();
 
 const md5 = require('blueimp-md5')
 
-const UserModel = require('../db/models').UserModel
+const models = require('../db/models')
+const UserModel = models.UserModel
+const ChatModel = models.ChatModel
+
 const filter = { password: 0, _v: 0 }
 
 /* GET home page. */
@@ -75,7 +78,7 @@ router.get('/user', function (req, res) {
     return res.send({ code: 1, msg: 'Please sign in first!' })
   }
 
-  UserModel.findOne({ _id: userid }, fileter, function (err, user) {
+  UserModel.findOne({ _id: userid }, filter, function (err, user) {
     return res.send({ code: 0, data: user })
   })
 })
@@ -84,6 +87,32 @@ router.get('/list', function (req, res) {
   const { type } = req.query
   UserModel.find({ type }, function (err, users) {
     return res.json({ code: 0, data: users })
+  })
+})
+
+router.get('/msglist', function (req, res) {
+  const userid = req.cookies.userid
+
+  UserModel.find(function (err, userDocs) {
+    const users = {}
+    userDocs.forEach(doc => {
+      users[doc._id] = { username: doc.username, avatar: doc.avatar }
+    })
+
+    ChatModel.find({ '$or': [{ from: userid }, { to: userid }] }, filter, function (err, chatMsgs) {
+
+      res.send({ code: 0, data: { users, chatMsgs } })
+    })
+  })
+})
+
+router.post('/readmsg', function (req, res) {
+  const from = req.body.from
+  const to = req.cookies.userid
+
+  ChatModel.update({ from, to, read: false }, { read: true }, { multi: true }, function (err, doc) {
+    console.log('/readmsg', doc);
+    res.send({ code: 0, data: doc.nModified })
   })
 })
 
