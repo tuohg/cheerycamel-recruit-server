@@ -14,7 +14,7 @@ router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-router.post('/register', function (req, res) {
+router.post('/api/register', function (req, res) {
 
   const { username, password, type } = req.body
 
@@ -41,7 +41,7 @@ router.post('/register', function (req, res) {
   // }
 })
 
-router.post('/login', function (req, res) {
+router.post('/api/login', function (req, res) {
   const { username, password } = req.body
 
   UserModel.findOne(
@@ -57,7 +57,7 @@ router.post('/login', function (req, res) {
     })
 })
 
-router.post('/update', function (req, res) {
+router.post('/api/update', function (req, res) {
   const userid = req.cookies.userid
   if (!userid) {
     return res.send({ code: 1, msg: 'Please sign in first!' })
@@ -72,7 +72,7 @@ router.post('/update', function (req, res) {
   })
 })
 
-router.get('/user', function (req, res) {
+router.get('/api/user', function (req, res) {
   const userid = req.cookies.userid
   if (!userid) {
     return res.send({ code: 1, msg: 'Please sign in first!' })
@@ -83,14 +83,14 @@ router.get('/user', function (req, res) {
   })
 })
 
-router.get('/list', function (req, res) {
+router.get('/api/list', function (req, res) {
   const { type } = req.query
   UserModel.find({ type }, function (err, users) {
     return res.json({ code: 0, data: users })
   })
 })
 
-router.get('/msglist', function (req, res) {
+router.get('/api/msglist', function (req, res) {
   const userid = req.cookies.userid
 
   UserModel.find(function (err, userDocs) {
@@ -106,7 +106,7 @@ router.get('/msglist', function (req, res) {
   })
 })
 
-router.post('/readmsg', function (req, res) {
+router.post('/api/readmsg', function (req, res) {
   const from = req.body.from
   const to = req.cookies.userid
 
